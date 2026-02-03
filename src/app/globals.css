@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fffdf5;
+  --foreground: #2d241e;
+
+  --ugadi-saffron: #ff9933;
+  --ugadi-green: #138808;
+  --ugadi-yellow: #ffdf00;
+  --ugadi-maroon: #800000;
+  --ugadi-gold: #ffd700;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-saffron: var(--ugadi-saffron);
+  --color-ugadi-green: var(--ugadi-green);
+  --color-ugadi-yellow: var(--ugadi-yellow);
+  --color-maroon: var(--ugadi-maroon);
+  --color-gold: var(--ugadi-gold);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+.traditional-border {
+  border-image: linear-gradient(to right, var(--ugadi-maroon), var(--ugadi-saffron), var(--ugadi-maroon)) 1;
+}
