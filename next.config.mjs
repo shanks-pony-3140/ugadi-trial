@@ -1,11 +1,10 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   output: 'export',
+  basePath: '/ugadi-trial',
   images: {
     unoptimized: true,
   },
-  basePath: '/ugadi-trial',
   trailingSlash: true,
   eslint: {
     ignoreDuringBuilds: true,
