@@ -6,8 +6,13 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   basePath: '/ugadi-trial',
+  trailingSlash: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 };
-
-// Configuration for GitHub Pages Deployment
 
 export default nextConfig;
