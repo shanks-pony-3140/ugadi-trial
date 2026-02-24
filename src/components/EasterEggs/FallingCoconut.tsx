@@ -3,68 +3,116 @@
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+type Coconut = {
+  id: number;
+  startX: number;
+};
+
 export default function FallingCoconut() {
-  const [coconuts, setCoconuts] = useState<{ id: number; x: number; y: number }[]>([]);
+  const [coconuts, setCoconuts] = useState<Coconut[]>([]);
 
-  const handleTreeClick = useCallback((e: React.MouseEvent) => {
+  const coconutPositions = [60, 70, 50];
+
+  const handleTreeClick = useCallback(() => {
     const id = Date.now();
-    const rect = e.currentTarget.getBoundingClientRect();
-    const containerRect = e.currentTarget.closest('.coconut-container')?.getBoundingClientRect();
+    const randomIndex = Math.floor(Math.random() * coconutPositions.length);
+    const startX = coconutPositions[randomIndex];
 
-    const x = e.clientX - (containerRect?.left || 0);
-    const y = e.clientY - (containerRect?.top || 0);
+    setCoconuts((prev) => [...prev, { id, startX }]);
 
-    setCoconuts((prev) => [...prev, { id, x, y }]);
-
-    // Remove coconut after animation
     setTimeout(() => {
       setCoconuts((prev) => prev.filter((c) => c.id !== id));
-    }, 2000);
+    }, 2200);
   }, []);
 
   return (
-    <div className="relative w-full overflow-hidden flex flex-col items-center py-12 bg-ugadi-green/5 coconut-container">
-      <div className="relative cursor-pointer group" onClick={handleTreeClick}>
-        {/* Simple SVG Coconut Tree */}
+    <div className="relative w-full flex justify-center py-12 bg-ugadi-green/5 overflow-hidden">
+      
+      <div className="relative w-[160px] h-[340px] cursor-pointer group" onClick={handleTreeClick}>
+        
         <svg
-          width="120"
-          height="160"
-          viewBox="0 0 120 160"
+          width="160"
+          height="220"
+          viewBox="0 0 160 220"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="group-hover:shake transition-transform"
         >
-          <path d="M55 160C55 160 50 100 60 40" stroke="#5D4037" strokeWidth="8" />
-          <path d="M60 40C60 40 10 30 5 10" stroke="#2E7D32" strokeWidth="4" />
-          <path d="M60 40C60 40 110 30 115 10" stroke="#2E7D32" strokeWidth="4" />
-          <path d="M60 40C60 40 30 0 40 -20" stroke="#2E7D32" strokeWidth="4" />
-          <path d="M60 40C60 40 90 0 80 -20" stroke="#2E7D32" strokeWidth="4" />
-          <circle cx="58" cy="35" r="5" fill="#5D4037" />
-          <circle cx="65" cy="38" r="5" fill="#5D4037" />
-          <circle cx="53" cy="40" r="5" fill="#5D4037" />
+          {/* Trunk */}
+          <path
+            d="M80 220 Q70 170 85 110 Q95 70 80 55"
+            stroke="#6D4C41"
+            strokeWidth="12"
+            strokeLinecap="round"
+          />
+
+          {/* --- CANOPY LAYER BACK --- */}
+          <path
+            d="M80 55 
+               C20 40, 10 0, 70 10
+               C90 -10, 150 0, 100 40
+               C140 60, 120 90, 80 70
+               C40 90, 20 60, 60 40 Z"
+            fill="#2E7D32"
+          />
+
+          {/* --- CANOPY LAYER FRONT (lighter for depth) --- */}
+          <path
+            d="M80 60 
+               C35 50, 25 15, 75 25
+               C95 5, 135 15, 105 50
+               C130 65, 105 85, 80 75
+               C55 85, 30 65, 55 50 Z"
+            fill="#388E3C"
+          />
+
+          {/* Coconut cluster inside canopy */}
+          <circle cx="80" cy="65" r="7" fill="#5D4037" />
+          <circle cx="70" cy="70" r="7" fill="#5D4037" />
+          <circle cx="90" cy="70" r="7" fill="#5D4037" />
         </svg>
-        <p className="mt-4 text-xs text-ugadi-green/60 font-medium">Click the tree!</p>
+
+        {/* Falling Coconuts */}
+        <AnimatePresence>
+          {coconuts.map((coconut) => {
+            const sway = (Math.random() - 0.5) * 30;
+
+            return (
+              <motion.div
+                key={coconut.id}
+                initial={{
+                  top: 65,
+                  left: coconut.startX + 20,
+                  rotate: 0,
+                  opacity: 1,
+                }}
+                animate={{
+                  top: [65, 270, 250, 270],
+                  left: coconut.startX + 20 + sway,
+                  rotate: 360,
+                  opacity: [1, 1, 1, 0],
+                }}
+                transition={{
+                  duration: 2,
+                  times: [0, 0.7, 0.85, 1],
+                  ease: ["easeIn", "easeOut", "easeIn"],
+                }}
+                className="absolute pointer-events-none"
+              >
+                <div className="w-6 h-8 bg-[#5D4037] rounded-full border-2 border-[#3E2723] shadow-md" />
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+
+        <p className="absolute top-[230px] w-full text-center text-xs text-ugadi-green/60">
+          Click the tree!
+        </p>
       </div>
 
-      <AnimatePresence>
-        {coconuts.map((coconut) => (
-          <motion.div
-            key={coconut.id}
-            initial={{ y: coconut.y, x: coconut.x - 15, opacity: 1 }}
-            animate={{ y: coconut.y + 500, opacity: [1, 1, 0] }}
-            transition={{ duration: 1, ease: "easeIn" }}
-            className="absolute pointer-events-none z-50"
-          >
-             <div className="w-8 h-10 bg-[#5D4037] rounded-full flex items-center justify-center shadow-lg border-2 border-[#3E2723]">
-                <div className="w-1 h-1 bg-white/20 rounded-full mb-4"></div>
-             </div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
-
       <style jsx>{`
-        .group:hover .group-hover\:shake {
-          animation: shake 0.5s ease-in-out infinite;
+        .group:hover svg {
+          animation: shake 0.6s ease-in-out infinite;
         }
         @keyframes shake {
           0%, 100% { transform: rotate(0deg); }
