@@ -8,4 +8,6 @@ const nextConfig: NextConfig = {
   basePath: '/ugadi-trial',
 };
 
+// Configuration for GitHub Pages Deployment
+
 export default nextConfig;
